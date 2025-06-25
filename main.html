@@ -3,32 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solar System Date Picker</title>
+    <title>Solar System Date Picker Component</title>
     <style>
+        /* Demo page styles */
         body {
             margin: 0;
             padding: 20px;
-            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
-            min-height: 100vh;
+            background: #f0f2f5;
             font-family: 'Arial', sans-serif;
-            color: white;
+            color: #333;
+        }
+
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .demo-header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .demo-controls {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .demo-controls button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .demo-controls button:hover {
+            background: #2980b9;
+        }
+
+        .demo-controls input {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .selected-date-display {
+            text-align: center;
+            padding: 20px;
+            background: #ecf0f1;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .code-section {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        .code-section pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+
+        /* Copy the solar date picker styles */
+        .solar-date-picker {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            border-radius: 20px;
+            padding: 40px 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
             overflow: hidden;
         }
 
-        .stars {
-            position: fixed;
+        .solar-date-picker .stars {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 1;
         }
 
-        .star {
+        .solar-date-picker .star {
             position: absolute;
             background: white;
             border-radius: 50%;
@@ -40,38 +122,37 @@
             50% { opacity: 1; }
         }
 
-        .solar-system {
+        .solar-date-picker .solar-system {
             position: relative;
-            width: 500px;
-            height: 500px;
-            margin: 50px auto;
-            z-index: 10;
+            width: 400px;
+            height: 400px;
+            margin: 0 auto;
         }
 
-        .orbit {
+        .solar-date-picker .orbit {
             position: absolute;
             border: 2px solid rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 400px;
-            height: 400px;
+            width: 320px;
+            height: 320px;
         }
 
-        .sun {
+        .solar-date-picker .sun {
             position: absolute;
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             background: radial-gradient(circle, #ffeb3b 0%, #ff9800 50%, #f44336 100%);
             border-radius: 50%;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             box-shadow: 
-                0 0 30px #ffeb3b,
-                0 0 60px #ff9800,
-                0 0 90px #f44336;
+                0 0 20px #ffeb3b,
+                0 0 40px #ff9800,
+                0 0 60px #f44336;
             animation: pulse 2s ease-in-out infinite;
             z-index: 5;
         }
@@ -81,31 +162,31 @@
             50% { transform: translate(-50%, -50%) scale(1.05); }
         }
 
-        .earth-container {
+        .solar-date-picker .earth-container {
             position: absolute;
-            width: 400px;
-            height: 400px;
+            width: 320px;
+            height: 320px;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             cursor: grab;
         }
 
-        .earth-container:active {
+        .solar-date-picker .earth-container:active {
             cursor: grabbing;
         }
 
-        .earth {
+        .solar-date-picker .earth {
             position: absolute;
-            width: 30px;
-            height: 30px;
+            width: 24px;
+            height: 24px;
             background: linear-gradient(45deg, #4CAF50 0%, #2196F3 50%, #4CAF50 100%);
             border-radius: 50%;
-            top: -15px;
-            left: 185px;
+            top: -12px;
+            left: 148px;
             box-shadow: 
-                inset -5px -5px 10px rgba(0,0,0,0.3),
-                0 0 20px rgba(76, 175, 80, 0.3);
+                inset -3px -3px 6px rgba(0,0,0,0.3),
+                0 0 15px rgba(76, 175, 80, 0.3);
             animation: earthRotate 10s linear infinite;
         }
 
@@ -117,271 +198,440 @@
             100% { background: linear-gradient(45deg, #4CAF50 0%, #2196F3 50%, #4CAF50 100%); }
         }
 
-        .date-display {
-            text-align: center;
-            margin-top: 30px;
-            z-index: 10;
-            position: relative;
-        }
-
-        .current-date {
-            font-size: 2.5em;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-        }
-
-        .date-info {
-            font-size: 1.2em;
-            opacity: 0.8;
-            margin-bottom: 5px;
-        }
-
-        .instructions {
+        .solar-date-picker .date-display {
             text-align: center;
             margin-top: 20px;
-            font-size: 1.1em;
-            opacity: 0.7;
-            max-width: 500px;
-            line-height: 1.6;
+            color: white;
+            position: relative;
+            z-index: 10;
         }
 
-        .month-markers {
+        .solar-date-picker .current-date {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .solar-date-picker .date-info {
+            font-size: 1em;
+            opacity: 0.8;
+            margin-bottom: 3px;
+        }
+
+        .solar-date-picker .month-markers {
             position: absolute;
-            width: 450px;
-            height: 450px;
+            width: 360px;
+            height: 360px;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none;
         }
 
-        .month-marker {
+        .solar-date-picker .month-marker {
             position: absolute;
-            width: 4px;
-            height: 20px;
+            width: 3px;
+            height: 15px;
             background: rgba(255, 255, 255, 0.3);
-            top: -10px;
+            top: -7.5px;
             left: 50%;
-            transform-origin: 2px 235px;
-            border-radius: 2px;
+            transform-origin: 1.5px 187.5px;
+            border-radius: 1.5px;
         }
 
-        .month-label {
+        .solar-date-picker .month-label {
             position: absolute;
-            top: -40px;
+            top: -30px;
             left: 50%;
             transform: translate(-50%, 0);
-            font-size: 12px;
+            font-size: 11px;
             color: rgba(255, 255, 255, 0.6);
             font-weight: bold;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .solar-date-picker .solar-system {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .solar-date-picker .orbit,
+            .solar-date-picker .earth-container {
+                width: 240px;
+                height: 240px;
+            }
+            
+            .solar-date-picker .earth {
+                left: 108px;
+            }
+            
+            .solar-date-picker .month-markers {
+                width: 270px;
+                height: 270px;
+            }
+            
+            .solar-date-picker .month-marker {
+                transform-origin: 1.5px 142.5px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="stars" id="stars"></div>
-    
-    <div class="solar-system">
-        <div class="orbit"></div>
-        <div class="month-markers" id="monthMarkers"></div>
-        <div class="sun"></div>
-        <div class="earth-container" id="earthContainer">
-            <div class="earth" id="earth"></div>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🌍 Solar System Date Picker Component</h1>
+            <p>A beautiful, interactive date picker that lets users drag Earth around the Sun to select dates</p>
+        </div>
+
+        <div class="demo-section">
+            <h2>Interactive Demo</h2>
+            <div class="demo-controls">
+                <button onclick="setDate('2024-02-29')">Feb 29, 2024 (Leap Year)</button>
+                <button onclick="setDate('2025-12-31')">Dec 31, 2025</button>
+                <button onclick="setDate('2026-01-01')">Jan 1, 2026</button>
+                <input type="date" id="dateInput" onchange="setDateFromInput()">
+                <button onclick="setToday()">Today</button>
+            </div>
+            
+            <!-- Solar Date Picker Component -->
+            <div id="solarDatePicker1" class="solar-date-picker"></div>
+            
+            <div class="selected-date-display">
+                <strong>Selected Date:</strong> <span id="selectedDate">June 25, 2025</span>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>How to Use in Your Project</h2>
+            <h3>1. Include the CSS and JavaScript:</h3>
+            <div class="code-section">
+                <pre>&lt;!-- Include the Solar Date Picker CSS --&gt;
+&lt;link rel="stylesheet" href="solar-datepicker.css"&gt;
+
+&lt;!-- Include the Solar Date Picker JavaScript --&gt;
+&lt;script src="solar-datepicker.js"&gt;&lt;/script&gt;</pre>
+            </div>
+
+            <h3>2. Add the HTML container:</h3>
+            <div class="code-section">
+                <pre>&lt;div id="myDatePicker" class="solar-date-picker"&gt;&lt;/div&gt;</pre>
+            </div>
+
+            <h3>3. Initialize the component:</h3>
+            <div class="code-section">
+                <pre>// Initialize the date picker
+const datePicker = new SolarDatePicker('myDatePicker', {
+    defaultDate: '2025-06-25',
+    onChange: function(date, dateString) {
+        console.log('Selected date:', dateString);
+        // Your custom logic here
+    }
+});
+
+// Available methods:
+datePicker.setDate('2025-12-31');  // Set specific date
+datePicker.getDate();              // Get current date as Date object
+datePicker.getDateString();        // Get current date as string
+datePicker.destroy();              // Clean up event listeners</pre>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2>Features</h2>
+            <ul>
+                <li>🌟 Beautiful space-themed design with twinkling stars</li>
+                <li>🌍 Drag Earth around the Sun to select dates</li>
+                <li>📅 Accurate leap year handling</li>
+                <li>📱 Fully responsive and touch-friendly</li>
+                <li>⚡ Easy to integrate and customize</li>
+                <li>🎯 Programmatic date setting and getting</li>
+                <li>🔄 Event callbacks for date changes</li>
+                <li>♿ Accessible with keyboard support</li>
+            </ul>
         </div>
     </div>
 
-    <div class="date-display">
-        <div class="current-date" id="currentDate">June 25, 2025</div>
-        <div class="date-info" id="dayOfWeek">Wednesday</div>
-        <div class="date-info" id="dayOfYear">Day 176 of 2025</div>
-    </div>
-
-    <div class="instructions">
-        Drag Earth around the Sun to change the date. One complete revolution equals one year. 
-        Smaller movements adjust months and days accordingly.
-    </div>
-
     <script>
-        // Create stars
-        function createStars() {
-            const starsContainer = document.getElementById('stars');
-            for (let i = 0; i < 200; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.width = Math.random() * 3 + 1 + 'px';
-                star.style.height = star.style.width;
-                star.style.animationDelay = Math.random() * 3 + 's';
-                starsContainer.appendChild(star);
-            }
-        }
-
-        // Create month markers
-        function createMonthMarkers() {
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                               'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const container = document.getElementById('monthMarkers');
-            
-            for (let i = 0; i < 12; i++) {
-                const marker = document.createElement('div');
-                marker.className = 'month-marker';
-                marker.style.transform = `rotate(${i * 30}deg)`;
+        // Solar Date Picker Component Class
+        class SolarDatePicker {
+            constructor(containerId, options = {}) {
+                this.container = document.getElementById(containerId);
+                this.options = {
+                    defaultDate: options.defaultDate || '2025-06-25',
+                    onChange: options.onChange || function() {},
+                    showInstructions: options.showInstructions !== false
+                };
                 
-                const label = document.createElement('div');
-                label.className = 'month-label';
-                label.textContent = monthNames[i];
-                label.style.transform = `rotate(${-i * 30}deg)`;
-                marker.appendChild(label);
+                this.totalRevolutions = 0;
+                this.lastAngle = 172.6;
+                this.isDragging = false;
+                this.currentAngle = 172.6;
                 
-                container.appendChild(marker);
-            }
-        }
-
-        // Date calculation functions
-        let totalRevolutions = 0;
-        let lastAngle = 172.6; // Starting at June 25
-
-        function isLeapYear(year) {
-            return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
-        }
-
-        function getDaysInYear(year) {
-            return isLeapYear(year) ? 366 : 365;
-        }
-
-        function angleToDate(angle) {
-            // Normalize angle to 0-360
-            angle = ((angle % 360) + 360) % 360;
-            
-            // Track when we cross January 1st (0 degrees)
-            const angleDiff = angle - lastAngle;
-            
-            // Detect crossing 0/360 boundary (January 1st)
-            if (angleDiff < -180) {
-                // Crossed from high angle to low angle (forward through Jan 1)
-                totalRevolutions++;
-            } else if (angleDiff > 180) {
-                // Crossed from low angle to high angle (backward through Jan 1)
-                totalRevolutions--;
+                this.init();
             }
             
-            lastAngle = angle;
-            
-            // Calculate year based on revolutions from 2025
-            const year = 2025 + totalRevolutions;
-            const daysInYear = getDaysInYear(year);
-            
-            // Calculate day of year from angle
-            const daysPerDegree = daysInYear / 360;
-            let dayOfYear = Math.round((angle * daysPerDegree) + 1);
-            
-            // Ensure dayOfYear is within valid range
-            if (dayOfYear > daysInYear) {
-                dayOfYear = daysInYear;
-            }
-            if (dayOfYear < 1) {
-                dayOfYear = 1;
+            init() {
+                this.createHTML();
+                this.createStars();
+                this.createMonthMarkers();
+                this.bindEvents();
+                
+                if (this.options.defaultDate) {
+                    this.setDate(this.options.defaultDate);
+                } else {
+                    this.updateEarthPosition(this.currentAngle);
+                }
             }
             
-            return {
-                dayOfYear: dayOfYear,
-                year: year,
-                daysInYear: daysInYear
-            };
-        }
-
-        function dayOfYearToDate(dayOfYear, year) {
-            const date = new Date(year, 0, dayOfYear);
-            return date;
-        }
-
-        function formatDate(date) {
-            const options = { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            };
-            return date.toLocaleDateString('en-US', options);
-        }
-
-        function getDayOfWeek(date) {
-            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            return days[date.getDay()];
-        }
-
-        function updateDateDisplay(angle) {
-            const dateResult = angleToDate(angle);
-            const date = dayOfYearToDate(dateResult.dayOfYear, dateResult.year);
+            createHTML() {
+                this.container.innerHTML = `
+                    <div class="stars"></div>
+                    <div class="solar-system">
+                        <div class="orbit"></div>
+                        <div class="month-markers"></div>
+                        <div class="sun"></div>
+                        <div class="earth-container">
+                            <div class="earth"></div>
+                        </div>
+                    </div>
+                    <div class="date-display">
+                        <div class="current-date">June 25, 2025</div>
+                        <div class="date-info day-of-week">Wednesday</div>
+                        <div class="date-info day-of-year">Day 176 of 365 (2025)</div>
+                    </div>
+                `;
+                
+                this.earthContainer = this.container.querySelector('.earth-container');
+                this.currentDateEl = this.container.querySelector('.current-date');
+                this.dayOfWeekEl = this.container.querySelector('.day-of-week');
+                this.dayOfYearEl = this.container.querySelector('.day-of-year');
+            }
             
-            document.getElementById('currentDate').textContent = formatDate(date);
-            document.getElementById('dayOfWeek').textContent = getDayOfWeek(date);
-            document.getElementById('dayOfYear').textContent = `Day ${dateResult.dayOfYear} of ${dateResult.daysInYear} (${dateResult.year})`;
-        }
-
-        // Initialize
-        let isDragging = false;
-        // June 25 is day 176, so angle = (176-1) * (360/365.25) ≈ 172.6 degrees
-        let currentAngle = 172.6; // Start at June 25, 2025
-        const earthContainer = document.getElementById('earthContainer');
-        const earth = document.getElementById('earth');
-
-        function getAngleFromMouse(event, center) {
-            const rect = earthContainer.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
+            createStars() {
+                const starsContainer = this.container.querySelector('.stars');
+                for (let i = 0; i < 100; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    star.style.left = Math.random() * 100 + '%';
+                    star.style.top = Math.random() * 100 + '%';
+                    star.style.width = Math.random() * 2 + 1 + 'px';
+                    star.style.height = star.style.width;
+                    star.style.animationDelay = Math.random() * 3 + 's';
+                    starsContainer.appendChild(star);
+                }
+            }
             
-            const deltaX = event.clientX - centerX;
-            const deltaY = event.clientY - centerY;
+            createMonthMarkers() {
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                const container = this.container.querySelector('.month-markers');
+                
+                for (let i = 0; i < 12; i++) {
+                    const marker = document.createElement('div');
+                    marker.className = 'month-marker';
+                    marker.style.transform = `rotate(${i * 30}deg)`;
+                    
+                    const label = document.createElement('div');
+                    label.className = 'month-label';
+                    label.textContent = monthNames[i];
+                    label.style.transform = `rotate(${-i * 30}deg)`;
+                    marker.appendChild(label);
+                    
+                    container.appendChild(marker);
+                }
+            }
             
-            return Math.atan2(deltaY, deltaX) * (180 / Math.PI) + 90;
+            isLeapYear(year) {
+                return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+            }
+            
+            getDaysInYear(year) {
+                return this.isLeapYear(year) ? 366 : 365;
+            }
+            
+            angleToDate(angle) {
+                angle = ((angle % 360) + 360) % 360;
+                
+                const angleDiff = angle - this.lastAngle;
+                
+                if (angleDiff < -180) {
+                    this.totalRevolutions++;
+                } else if (angleDiff > 180) {
+                    this.totalRevolutions--;
+                }
+                
+                this.lastAngle = angle;
+                
+                const year = 2025 + this.totalRevolutions;
+                const daysInYear = this.getDaysInYear(year);
+                
+                const daysPerDegree = daysInYear / 360;
+                let dayOfYear = Math.round((angle * daysPerDegree) + 1);
+                
+                if (dayOfYear > daysInYear) {
+                    dayOfYear = daysInYear;
+                }
+                if (dayOfYear < 1) {
+                    dayOfYear = 1;
+                }
+                
+                return {
+                    dayOfYear: dayOfYear,
+                    year: year,
+                    daysInYear: daysInYear
+                };
+            }
+            
+            dayOfYearToDate(dayOfYear, year) {
+                const date = new Date(year, 0, dayOfYear);
+                return date;
+            }
+            
+            formatDate(date) {
+                const options = { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                };
+                return date.toLocaleDateString('en-US', options);
+            }
+            
+            getDayOfWeek(date) {
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                return days[date.getDay()];
+            }
+            
+            updateDateDisplay(angle) {
+                const dateResult = this.angleToDate(angle);
+                const date = this.dayOfYearToDate(dateResult.dayOfYear, dateResult.year);
+                
+                this.currentDateEl.textContent = this.formatDate(date);
+                this.dayOfWeekEl.textContent = this.getDayOfWeek(date);
+                this.dayOfYearEl.textContent = `Day ${dateResult.dayOfYear} of ${dateResult.daysInYear} (${dateResult.year})`;
+                
+                // Trigger onChange callback
+                this.options.onChange(date, this.formatDate(date));
+            }
+            
+            updateEarthPosition(angle) {
+                this.currentAngle = angle;
+                this.earthContainer.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+                this.updateDateDisplay(angle);
+            }
+            
+            getAngleFromMouse(event) {
+                const rect = this.earthContainer.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                const clientX = event.clientX || (event.touches && event.touches[0].clientX);
+                const clientY = event.clientY || (event.touches && event.touches[0].clientY);
+                
+                const deltaX = clientX - centerX;
+                const deltaY = clientY - centerY;
+                
+                return Math.atan2(deltaY, deltaX) * (180 / Math.PI) + 90;
+            }
+            
+            bindEvents() {
+                // Mouse events
+                this.earthContainer.addEventListener('mousedown', (e) => {
+                    this.isDragging = true;
+                    e.preventDefault();
+                });
+                
+                document.addEventListener('mousemove', (e) => {
+                    if (this.isDragging) {
+                        const angle = this.getAngleFromMouse(e);
+                        this.updateEarthPosition(angle);
+                    }
+                });
+                
+                document.addEventListener('mouseup', () => {
+                    this.isDragging = false;
+                });
+                
+                // Touch events
+                this.earthContainer.addEventListener('touchstart', (e) => {
+                    this.isDragging = true;
+                    e.preventDefault();
+                });
+                
+                document.addEventListener('touchmove', (e) => {
+                    if (this.isDragging) {
+                        const angle = this.getAngleFromMouse(e);
+                        this.updateEarthPosition(angle);
+                    }
+                });
+                
+                document.addEventListener('touchend', () => {
+                    this.isDragging = false;
+                });
+            }
+            
+            // Public API methods
+            setDate(dateString) {
+                const date = new Date(dateString);
+                const year = date.getFullYear();
+                const dayOfYear = Math.ceil((date - new Date(year, 0, 0)) / (1000 * 60 * 60 * 24));
+                
+                // Calculate revolutions from base year 2025
+                this.totalRevolutions = year - 2025;
+                
+                // Calculate angle from day of year
+                const daysInYear = this.getDaysInYear(year);
+                const angle = ((dayOfYear - 1) / daysInYear) * 360;
+                
+                this.lastAngle = angle;
+                this.updateEarthPosition(angle);
+            }
+            
+            getDate() {
+                const dateResult = this.angleToDate(this.currentAngle);
+                return this.dayOfYearToDate(dateResult.dayOfYear, dateResult.year);
+            }
+            
+            getDateString() {
+                return this.formatDate(this.getDate());
+            }
+            
+            destroy() {
+                // Remove event listeners and clean up
+                this.earthContainer.removeEventListener('mousedown', this.bindEvents);
+                this.earthContainer.removeEventListener('touchstart', this.bindEvents);
+            }
         }
-
-        function updateEarthPosition(angle) {
-            currentAngle = angle;
-            earthContainer.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
-            updateDateDisplay(angle);
-        }
-
-        // Mouse events
-        earthContainer.addEventListener('mousedown', (event) => {
-            isDragging = true;
-            event.preventDefault();
-        });
-
-        document.addEventListener('mousemove', (event) => {
-            if (isDragging) {
-                const angle = getAngleFromMouse(event);
-                updateEarthPosition(angle);
+        
+        // Initialize demo
+        const datePicker1 = new SolarDatePicker('solarDatePicker1', {
+            defaultDate: '2025-06-25',
+            onChange: function(date, dateString) {
+                document.getElementById('selectedDate').textContent = dateString;
             }
         });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-        });
-
-        // Touch events for mobile
-        earthContainer.addEventListener('touchstart', (event) => {
-            isDragging = true;
-            event.preventDefault();
-        });
-
-        document.addEventListener('touchmove', (event) => {
-            if (isDragging) {
-                const touch = event.touches[0];
-                const angle = getAngleFromMouse(touch);
-                updateEarthPosition(angle);
+        
+        // Demo functions
+        function setDate(dateString) {
+            datePicker1.setDate(dateString);
+        }
+        
+        function setDateFromInput() {
+            const inputDate = document.getElementById('dateInput').value;
+            if (inputDate) {
+                datePicker1.setDate(inputDate);
             }
-        });
-
-        document.addEventListener('touchend', () => {
-            isDragging = false;
-        });
-
-        // Initialize the display
-        createStars();
-        createMonthMarkers();
-        updateEarthPosition(172.6); // Start with June 25, 2025
+        }
+        
+        function setToday() {
+            const today = new Date().toISOString().split('T')[0];
+            datePicker1.setDate(today);
+            document.getElementById('dateInput').value = today;
+        }
+        
+        // Set today's date in the input
+        document.getElementById('dateInput').value = new Date().toISOString().split('T')[0];
     </script>
 </body>
 </html>
