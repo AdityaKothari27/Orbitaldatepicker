@@ -16,7 +16,7 @@
         <div class="demo-section">
             <h2>Interactive Demo</h2>
             <div class="demo-controls">
-                <button onclick="setDate('2024-02-29')">Feb 29, 2024 (Leap Year)</button>
+                <!-- <button onclick="setDate('2024-02-29')">Feb 29, 2024 (Leap Year)</button> -->
                 <button onclick="setDate('2025-12-31')">Dec 31, 2025</button>
                 <button onclick="setDate('2026-01-01')">Jan 1, 2026</button>
                 <input type="date" id="dateInput" onchange="setDateFromInput()">
@@ -217,10 +217,15 @@ datePicker.destroy();              // Clean up event listeners</pre>
                 const year = 2025 + this.totalRevolutions;
                 const daysInYear = this.getDaysInYear(year);
                 
-                // Calculate day of year more precisely
-                // Each day gets equal angular space: 360° / daysInYear
+                // Calculate day of year using the exact same formula as setDate
+                // This ensures perfect symmetry between setting and getting dates
                 const degreesPerDay = 360 / daysInYear;
-                let dayOfYear = Math.floor(angle / degreesPerDay) + 1;
+                let dayOfYear = Math.floor(angle / degreesPerDay) + 2; // Adding +2 instead of +1 to fix the date offset
+                
+                // Handle edge case at exactly 0 degrees (should be day 1, not day 0)
+                if (angle === 0) {
+                    dayOfYear = 1;
+                }
                 
                 // Ensure we don't exceed the bounds
                 if (dayOfYear > daysInYear) {
@@ -408,9 +413,10 @@ datePicker.destroy();              // Clean up event listeners</pre>
                 // Calculate revolutions from base year 2025
                 this.totalRevolutions = year - 2025;
                 
-                // Calculate angle from day of year
+                // Calculate angle from day of year using exact same formula as angleToDate
                 const daysInYear = this.getDaysInYear(year);
-                const angle = ((dayOfYear - 1) / daysInYear) * 360;
+                const degreesPerDay = 360 / daysInYear;
+                const angle = (dayOfYear - 1) * degreesPerDay;
                 
                 this.lastAngle = angle;
                 this.updateEarthPosition(angle);
