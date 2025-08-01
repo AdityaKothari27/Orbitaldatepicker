@@ -129,8 +129,8 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 320px;
-    height: 320px;
+    width: 360px;
+    height: 280px;
 }
 
 .solar-date-picker .sun {
@@ -157,8 +157,8 @@ body {
 
 .solar-date-picker .earth-container {
     position: absolute;
-    width: 320px;
-    height: 320px;
+    width: 360px;
+    height: 280px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -175,8 +175,7 @@ body {
     height: 24px;
     background: linear-gradient(45deg, #4CAF50 0%, #2196F3 50%, #4CAF50 100%);
     border-radius: 50%;
-    top: -12px;
-    left: 148px;
+    transform: translate(-50%, -50%);
     box-shadow: 
         inset -3px -3px 6px rgba(0,0,0,0.3),
         0 0 15px rgba(76, 175, 80, 0.3);
@@ -214,8 +213,8 @@ body {
 
 .solar-date-picker .month-markers {
     position: absolute;
-    width: 360px;
-    height: 360px;
+    width: 400px;
+    height: 320px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -223,13 +222,9 @@ body {
 }
 
 .solar-date-picker .month-marker {
-    position: absolute;
     width: 3px;
     height: 15px;
     background: rgba(255, 255, 255, 0.3);
-    top: -7.5px;
-    left: 50%;
-    transform-origin: 1.5px 187.5px;
     border-radius: 1.5px;
 }
 
@@ -252,20 +247,12 @@ body {
     
     .solar-date-picker .orbit,
     .solar-date-picker .earth-container {
-        width: 240px;
-        height: 240px;
-    }
-    
-    .solar-date-picker .earth {
-        left: 108px;
+        width: 270px;
+        height: 210px;
     }
     
     .solar-date-picker .month-markers {
-        width: 270px;
-        height: 270px;
-    }
-    
-    .solar-date-picker .month-marker {
-        transform-origin: 1.5px 142.5px;
+        width: 300px;
+        height: 240px;
     }
 }

@@ -156,15 +156,30 @@ datePicker.destroy();              // Clean up event listeners</pre>
                                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                 const container = this.container.querySelector('.month-markers');
                 
+                // Check if we're on mobile for responsive positioning
+                const isMobile = window.innerWidth <= 768;
+                const scaleX = isMobile ? 135 : 180; // Scaled semi-major axis
+                const scaleY = isMobile ? 105 : 140; // Scaled semi-minor axis
+                const offsetX = isMobile ? 150 : 200; // Half container width
+                const offsetY = isMobile ? 120 : 160; // Half container height
+                
                 for (let i = 0; i < 12; i++) {
                     const marker = document.createElement('div');
                     marker.className = 'month-marker';
-                    marker.style.transform = `rotate(${i * 30}deg)`;
+                    
+                    // Calculate elliptical position for each month marker
+                    const angle = i * 30; // 30 degrees per month
+                    const ellipsePos = this.angleToEllipticalPosition(angle);
+                    
+                    // Position the marker at the elliptical coordinates
+                    marker.style.position = 'absolute';
+                    marker.style.left = `${(ellipsePos.x * (scaleX/180)) + offsetX - 1.5}px`;
+                    marker.style.top = `${(ellipsePos.y * (scaleY/140)) + offsetY - 7.5}px`;
+                    marker.style.transform = 'none';
                     
                     const label = document.createElement('div');
                     label.className = 'month-label';
                     label.textContent = monthNames[i];
-                    label.style.transform = `rotate(${-i * 30}deg)`;
                     marker.appendChild(label);
                     
                     container.appendChild(marker);
@@ -245,8 +260,41 @@ datePicker.destroy();              // Clean up event listeners</pre>
             
             updateEarthPosition(angle) {
                 this.currentAngle = angle;
-                this.earthContainer.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+                
+                // Convert angle to elliptical coordinates
+                const ellipsePosition = this.angleToEllipticalPosition(angle);
+                
+                // Check if we're on mobile for responsive positioning
+                const isMobile = window.innerWidth <= 768;
+                const scaleX = isMobile ? 135 : 180; // Scaled semi-major axis
+                const scaleY = isMobile ? 105 : 140; // Scaled semi-minor axis
+                const offsetX = isMobile ? 135 : 180; // Half container width
+                const offsetY = isMobile ? 105 : 140; // Half container height
+                
+                // Position the Earth directly at the calculated elliptical coordinates
+                const earth = this.container.querySelector('.earth');
+                earth.style.left = `${(ellipsePosition.x * (scaleX/180)) + offsetX}px`;
+                earth.style.top = `${(ellipsePosition.y * (scaleY/140)) + offsetY}px`;
+                
                 this.updateDateDisplay(angle);
+            }
+            
+            angleToEllipticalPosition(angle) {
+                // Convert angle to radians
+                const radians = (angle * Math.PI) / 180;
+                
+                // Ellipse parameters (semi-major and semi-minor axes)
+                const a = 180; // Semi-major axis (half width)
+                const b = 140; // Semi-minor axis (half height)
+                
+                // Calculate elliptical coordinates
+                const x = a * Math.cos(radians);
+                const y = b * Math.sin(radians);
+                
+                return {
+                    x: x,
+                    y: y
+                };
             }
             
             getAngleFromMouse(event) {
@@ -260,7 +308,39 @@ datePicker.destroy();              // Clean up event listeners</pre>
                 const deltaX = clientX - centerX;
                 const deltaY = clientY - centerY;
                 
-                return Math.atan2(deltaY, deltaX) * (180 / Math.PI) + 90;
+                // Convert mouse position to elliptical angle
+                return this.mouseToEllipticalAngle(deltaX, deltaY);
+            }
+            
+            mouseToEllipticalAngle(deltaX, deltaY) {
+                // Ellipse parameters
+                const a = 180; // Semi-major axis
+                const b = 140; // Semi-minor axis
+                
+                // Find the closest point on the ellipse to the mouse position
+                // This is a simplified approach - we'll use the angle that produces
+                // the closest elliptical point to the mouse position
+                let closestAngle = 0;
+                let minDistance = Infinity;
+                
+                // Check angles in 1-degree increments to find the closest point
+                for (let testAngle = 0; testAngle < 360; testAngle += 1) {
+                    const radians = (testAngle * Math.PI) / 180;
+                    const ellipseX = a * Math.cos(radians);
+                    const ellipseY = b * Math.sin(radians);
+                    
+                    const distance = Math.sqrt(
+                        Math.pow(ellipseX - deltaX, 2) + 
+                        Math.pow(ellipseY - deltaY, 2)
+                    );
+                    
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestAngle = testAngle;
+                    }
+                }
+                
+                return closestAngle;
             }
             
             bindEvents() {
