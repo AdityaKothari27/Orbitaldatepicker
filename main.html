@@ -27,7 +27,7 @@
             <div id="solarDatePicker1" class="solar-date-picker"></div>
             
             <div class="selected-date-display">
-                <strong>Selected Date:</strong> <span id="selectedDate">June 25, 2025</span>
+                <strong>Selected Date:</strong> <span id="selectedDate">Loading...</span>
             </div>
         </div>
 
@@ -86,8 +86,15 @@ datePicker.destroy();              // Clean up event listeners</pre>
         class SolarDatePicker {
             constructor(containerId, options = {}) {
                 this.container = document.getElementById(containerId);
+                
+                // Get current date in local timezone
+                const today = new Date();
+                const currentDateString = today.getFullYear() + '-' + 
+                    String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                    String(today.getDate()).padStart(2, '0');
+                
                 this.options = {
-                    defaultDate: options.defaultDate || '2025-06-25',
+                    defaultDate: options.defaultDate || currentDateString,
                     onChange: options.onChange || function() {},
                     showInstructions: options.showInstructions !== false
                 };
@@ -125,9 +132,9 @@ datePicker.destroy();              // Clean up event listeners</pre>
                         </div>
                     </div>
                     <div class="date-display">
-                        <div class="current-date">June 25, 2025</div>
-                        <div class="date-info day-of-week">Wednesday</div>
-                        <div class="date-info day-of-year">Day 176 of 365 (2025)</div>
+                        <div class="current-date">Loading...</div>
+                        <div class="date-info day-of-week">Loading...</div>
+                        <div class="date-info day-of-year">Loading...</div>
                     </div>
                 `;
                 
@@ -210,9 +217,12 @@ datePicker.destroy();              // Clean up event listeners</pre>
                 const year = 2025 + this.totalRevolutions;
                 const daysInYear = this.getDaysInYear(year);
                 
-                const daysPerDegree = daysInYear / 360;
-                let dayOfYear = Math.round((angle * daysPerDegree) + 1);
+                // Calculate day of year more precisely
+                // Each day gets equal angular space: 360° / daysInYear
+                const degreesPerDay = 360 / daysInYear;
+                let dayOfYear = Math.floor(angle / degreesPerDay) + 1;
                 
+                // Ensure we don't exceed the bounds
                 if (dayOfYear > daysInYear) {
                     dayOfYear = daysInYear;
                 }
@@ -228,7 +238,9 @@ datePicker.destroy();              // Clean up event listeners</pre>
             }
             
             dayOfYearToDate(dayOfYear, year) {
-                const date = new Date(year, 0, dayOfYear);
+                // Create date at start of year and add the days
+                const date = new Date(year, 0, 1); // January 1st
+                date.setDate(date.getDate() + dayOfYear - 1); // Add days (subtract 1 because we start from day 1)
                 return date;
             }
             
@@ -381,9 +393,17 @@ datePicker.destroy();              // Clean up event listeners</pre>
             
             // Public API methods
             setDate(dateString) {
-                const date = new Date(dateString);
-                const year = date.getFullYear();
-                const dayOfYear = Math.ceil((date - new Date(year, 0, 0)) / (1000 * 60 * 60 * 24));
+                const dateParts = dateString.split('-');
+                const year = parseInt(dateParts[0]);
+                const month = parseInt(dateParts[1]) - 1; // Month is 0-indexed
+                const day = parseInt(dateParts[2]);
+                
+                // Create date using local timezone
+                const date = new Date(year, month, day);
+                
+                // Calculate day of year using local timezone
+                const startOfYear = new Date(year, 0, 1);
+                const dayOfYear = Math.floor((date - startOfYear) / (1000 * 60 * 60 * 24)) + 1;
                 
                 // Calculate revolutions from base year 2025
                 this.totalRevolutions = year - 2025;
@@ -414,7 +434,6 @@ datePicker.destroy();              // Clean up event listeners</pre>
         
         // Initialize demo
         const datePicker1 = new SolarDatePicker('solarDatePicker1', {
-            defaultDate: '2025-06-25',
             onChange: function(date, dateString) {
                 document.getElementById('selectedDate').textContent = dateString;
             }
@@ -433,13 +452,20 @@ datePicker.destroy();              // Clean up event listeners</pre>
         }
         
         function setToday() {
-            const today = new Date().toISOString().split('T')[0];
-            datePicker1.setDate(today);
-            document.getElementById('dateInput').value = today;
+            const today = new Date();
+            const todayString = today.getFullYear() + '-' + 
+                String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                String(today.getDate()).padStart(2, '0');
+            datePicker1.setDate(todayString);
+            document.getElementById('dateInput').value = todayString;
         }
         
         // Set today's date in the input
-        document.getElementById('dateInput').value = new Date().toISOString().split('T')[0];
+        const today = new Date();
+        const todayInputString = today.getFullYear() + '-' + 
+            String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+            String(today.getDate()).padStart(2, '0');
+        document.getElementById('dateInput').value = todayInputString;
     </script>
 </body>
 </html>
